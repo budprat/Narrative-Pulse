@@ -66,18 +66,20 @@ const DemoFeature = () => {
               <label className="block text-sm font-medium mb-2">
                 Select your narrative tone:
               </label>
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-                {tones.map(tone => (
-                  <TabsTrigger 
-                    key={tone.id} 
-                    value={tone.id}
-                    onClick={() => setToneSelected(tone.id)}
-                    className={toneSelected === tone.id ? "bg-primary text-primary-foreground" : ""}
-                  >
-                    {tone.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+              <Tabs defaultValue={toneSelected}>
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+                  {tones.map(tone => (
+                    <TabsTrigger 
+                      key={tone.id} 
+                      value={tone.id}
+                      onClick={() => setToneSelected(tone.id)}
+                      className={toneSelected === tone.id ? "bg-primary text-primary-foreground" : ""}
+                    >
+                      {tone.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
             </div>
 
             <Button 
