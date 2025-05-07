@@ -59,17 +59,17 @@ const UseCases = () => {
   ];
 
   return (
-    <section id="usecases" className="py-20">
+    <section id="usecases" className="py-12">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="gradient-text mb-4">Transforming Industries Through Narrative</h2>
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="gradient-text mb-3 text-3xl md:text-4xl">Transforming Industries Through Narrative</h2>
           <p className="text-muted-foreground">
             See how NarrativePulse empowers organizations across sectors to achieve their goals through strategic storytelling.
           </p>
         </div>
 
         <Tabs defaultValue="political" className="w-full max-w-5xl mx-auto">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
             {useCases.map((useCase) => (
               <TabsTrigger key={useCase.id} value={useCase.id} className="text-sm md:text-base">
                 {useCase.label}
@@ -79,20 +79,20 @@ const UseCases = () => {
           
           {useCases.map((useCase) => (
             <TabsContent key={useCase.id} value={useCase.id} className="animate-fade-in">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="grid md:grid-cols-2 gap-6 items-center">
                 <div>
-                  <Badge variant="secondary" className="mb-4">
+                  <Badge variant="secondary" className="mb-3">
                     {useCase.label}
                   </Badge>
-                  <h3 className="text-2xl font-semibold mb-4">{useCase.title}</h3>
-                  <p className="text-muted-foreground mb-6">{useCase.description}</p>
+                  <h3 className="text-xl font-semibold mb-3">{useCase.title}</h3>
+                  <p className="text-muted-foreground mb-4 text-sm">{useCase.description}</p>
                   
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Key Benefits:</h4>
-                    <ul className="space-y-2">
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm">Key Benefits:</h4>
+                    <ul className="space-y-1.5 text-sm">
                       {useCase.benefits.map((benefit, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <span className="h-5 w-5 min-w-5 rounded-full gradient-bg flex items-center justify-center text-white text-xs mt-0.5">✓</span>
+                          <span className="h-4 w-4 min-w-4 rounded-full gradient-bg flex items-center justify-center text-white text-xs mt-0.5">✓</span>
                           <span>{benefit}</span>
                         </li>
                       ))}

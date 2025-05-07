@@ -114,10 +114,11 @@
   }
   
   .feature-card {
-    @apply relative overflow-hidden rounded-xl p-6 glass-card transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+    @apply relative overflow-hidden rounded-lg p-0 glass-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
   
   .feature-icon {
-    @apply mb-4 p-3 rounded-lg text-white gradient-bg;
+    @apply p-2 rounded-lg text-white gradient-bg;
   }
 }
+

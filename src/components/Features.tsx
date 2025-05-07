@@ -44,27 +44,27 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="py-20 bg-muted/50">
+    <section id="features" className="py-12 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="gradient-text mb-4">Powerful Features for Strategic Storytelling</h2>
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="gradient-text mb-3 text-3xl md:text-4xl">Powerful Features for Strategic Storytelling</h2>
           <p className="text-muted-foreground">
             Our AI-powered platform provides all the tools you need to craft compelling narratives
             that drive real-world change.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((feature, index) => (
-            <Card key={index} className="feature-card">
-              <CardHeader className="pb-2">
-                <div className="feature-icon w-12 h-12 flex items-center justify-center">
+            <Card key={index} className="feature-card border-t-2 border-t-primary/30 hover:border-t-primary transition-colors">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <div className="feature-icon w-10 h-10 flex items-center justify-center mb-3">
                   {feature.icon}
                 </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">{feature.description}</CardDescription>
+              <CardContent className="px-4 pb-4 pt-0">
+                <CardDescription className="text-sm">{feature.description}</CardDescription>
               </CardContent>
             </Card>
           ))}
