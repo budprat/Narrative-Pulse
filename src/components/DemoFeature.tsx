@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Lightbulb, Sparkles, Copy, Trending, Brain, Zap } from "lucide-react";
+import { Check, Lightbulb, Sparkles, Copy, TrendingUp, Brain, Zap } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +18,7 @@ const DemoFeature = () => {
   const tones = [
     { id: "activist", label: "Activist", icon: <Zap className="h-4 w-4" /> },
     { id: "scientific", label: "Scientific", icon: <Brain className="h-4 w-4" /> },
-    { id: "political", label: "Political", icon: <Trending className="h-4 w-4" /> },
+    { id: "political", label: "Political", icon: <TrendingUp className="h-4 w-4" /> },
     { id: "inspirational", label: "Inspirational", icon: <Sparkles className="h-4 w-4" /> }
   ];
 
@@ -103,7 +102,7 @@ const DemoFeature = () => {
 
             <div className="mb-6 space-y-2">
               <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <Trending className="h-4 w-4 text-primary" />
+                <TrendingUp className="h-4 w-4 text-primary" />
                 Select your narrative tone:
               </label>
               <Tabs defaultValue={toneSelected} onValueChange={setToneSelected} className="w-full">
