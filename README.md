@@ -1,73 +1,90 @@
-# Welcome to your Lovable project
 
-## Project info
+# NarrativePulse: AI-Powered Storytelling Assistant
 
-**URL**: https://lovable.dev/projects/7878b6ed-f33e-42ac-9cb1-c3a5c5ad4fda
+![NarrativePulse](https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?q=80&w=1000&auto=format&fit=crop)
 
-## How can I edit this code?
+## 🌟 [Live Preview](https://lovable.dev/projects/7878b6ed-f33e-42ac-9cb1-c3a5c5ad4fda)
 
-There are several ways of editing your application.
+NarrativePulse is an AI-powered storytelling assistant designed to help policy makers, NGOs, and campaigns translate complex data into compelling narratives that influence decisions and public opinion.
 
-**Use Lovable**
+## 🚀 Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7878b6ed-f33e-42ac-9cb1-c3a5c5ad4fda) and start prompting.
+- **Narrative Intelligence Engine**: Converts raw data into engaging narratives with customizable tones (Activist, Scientific, Political, or Inspirational)
+- **EthnoAI Agent**: Transforms field notes and survey responses into personas, sentiments, and compelling story arcs
+- **Campaign Companion**: Suggests high-impact story formats and provides feedback on narrative structure
+- **StoryCrowd Plugin**: Crowdsource and verify grassroots submissions for authentic narratives
+- **Multilingual Adaptation**: Automatically translates and culturally adapts content for global reach
+- **Impact Analytics**: Measure narrative effectiveness with comprehensive metrics and visualizations
 
-Changes made via Lovable will be committed automatically to this repo.
+## 💼 Use Cases
 
-**Use your preferred IDE**
+- **Political Campaigns**: Win elections with data-driven storytelling
+- **NGOs & Advocacy**: Amplify your cause with emotional narratives
+- **Sustainability**: Communicate environmental impact effectively
+- **Policy Development**: Shape better policy with strategic narratives
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Shadcn/UI
+- Lucide icons
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/narrativepulse.git
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Install dependencies
+   ```
+   cd narrativepulse
+   npm install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. Start the development server
+   ```
+   npm run dev
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+4. Open your browser and visit `http://localhost:5173`
+
+## 📋 Project Structure
+
+```
+narrativepulse/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── ui/             # UI components using shadcn/ui
+│   │   ├── Features.tsx    # Feature showcase component
+│   │   ├── Hero.tsx        # Landing page hero section
+│   │   └── ...
+│   ├── pages/
+│   │   └── Index.tsx       # Main landing page
+│   ├── lib/
+│   ├── hooks/
+│   └── ...
+└── ...
 ```
 
-**Edit a file directly in GitHub**
+## 🤝 Contributing
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-**Use GitHub Codespaces**
+## 📝 License
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## What technologies are used for this project?
+## 🙏 Acknowledgments
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7878b6ed-f33e-42ac-9cb1-c3a5c5ad4fda) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Built with [Lovable](https://lovable.dev)
+- Icons from [Lucide](https://lucide.dev)
+- UI components from [shadcn/ui](https://ui.shadcn.com)
