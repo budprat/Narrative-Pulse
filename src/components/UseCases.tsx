@@ -15,7 +15,7 @@ const UseCases = () => {
         "Develop consistent narrative across all campaign materials",
         "Quickly respond to evolving campaign dynamics"
       ],
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=400&fit=crop&q=80"
     },
     {
       id: "ngos",
@@ -28,7 +28,7 @@ const UseCases = () => {
         "Build cross-cultural awareness and support",
         "Track narrative impact on advocacy goals"
       ],
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop&q=80"
     },
     {
       id: "sustainability",
@@ -41,7 +41,7 @@ const UseCases = () => {
         "Adapt complex climate science for different audiences",
         "Build emotional connection to sustainability initiatives"
       ],
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&h=400&fit=crop&q=80"
     },
     {
       id: "policy",
@@ -54,7 +54,7 @@ const UseCases = () => {
         "Integrate diverse community perspectives into coherent narratives",
         "Measure narrative effectiveness on policy outcomes"
       ],
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&h=400&fit=crop&q=80"
     }
   ];
 
