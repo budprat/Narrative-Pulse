@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Lightbulb, Sparkles, Copy, TrendingUp, Brain, Zap } from "lucide-react";
+import { Check, Lightbulb, Sparkles, Copy, TrendingUp, Brain, Zap, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { validateNarrativeInput } from "@/lib/validation";
+import { useToast } from "@/hooks/use-toast";
 
 const DemoFeature = () => {
   const [inputText, setInputText] = useState("");
@@ -14,6 +16,8 @@ const DemoFeature = () => {
   const [outputText, setOutputText] = useState("");
   const [generationProgress, setGenerationProgress] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [validationError, setValidationError] = useState("");
+  const { toast } = useToast();
 
   const tones = [
     { id: "activist", label: "Activist", icon: <Zap className="h-4 w-4" /> },
@@ -41,11 +45,27 @@ const DemoFeature = () => {
   }, [isGenerating]);
 
   const handleGenerate = () => {
-    if (!inputText.trim()) return;
-    
+    // Clear previous errors
+    setValidationError("");
+
+    // Validate input
+    const validation = validateNarrativeInput(inputText, toneSelected);
+
+    if (!validation.success) {
+      setValidationError(validation.error);
+      toast({
+        title: "Validation Error",
+        description: validation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsGenerating(true);
     setOutputText("");
-    // Simulate AI processing
+
+    // TODO: Replace with actual API call
+    // Simulate AI processing (mock implementation)
     setTimeout(() => {
       const outputs = {
         activist: "The unprecedented loss of biodiversity in our region isn't just a statistic—it's a call to action. Every day we wait, more species face extinction and more ecosystems collapse. Join our movement to demand immediate policy changes that protect our natural heritage before it's too late.",
@@ -53,8 +73,8 @@ const DemoFeature = () => {
         political: "Our administration recognizes that environmental protection and economic growth can coexist. The proposed Biodiversity Protection Act balances the needs of industry stakeholders while ensuring sustainable management of our natural resources for future generations.",
         inspirational: "Imagine a world where our children can experience the same natural wonders we cherished growing up. Together, we can create this reality. Every conservation action, no matter how small, contributes to a magnificent tapestry of renewal and hope for our planet."
       };
-      
-      setOutputText(outputs[toneSelected]);
+
+      setOutputText(outputs[toneSelected as keyof typeof outputs]);
       setIsGenerating(false);
     }, 1500);
   };
@@ -92,12 +112,24 @@ const DemoFeature = () => {
                 <Brain className="h-4 w-4 text-primary" />
                 Input your data or research findings:
               </label>
-              <Textarea 
+              <Textarea
                 placeholder="Enter environmental data, research findings, survey results, or any information you want to transform..."
-                className="min-h-32 transition-all duration-200 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                className={cn(
+                  "min-h-32 transition-all duration-200 focus:border-primary/50 focus:ring-2 focus:ring-primary/20",
+                  validationError && "border-destructive focus:border-destructive focus:ring-destructive/20"
+                )}
                 value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  setValidationError(""); // Clear error on input change
+                }}
               />
+              {validationError && (
+                <div className="flex items-center gap-2 text-sm text-destructive mt-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>{validationError}</span>
+                </div>
+              )}
             </div>
 
             <div className="mb-6 space-y-2">
