@@ -1,23 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Lightbulb, Sparkles, Copy, TrendingUp, Brain, Zap, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Check, Lightbulb, Sparkles, Copy, TrendingUp, Brain, Zap, AlertCircle, Info, Shield } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { validateNarrativeInput } from "@/lib/validation";
 import { useToast } from "@/hooks/use-toast";
+import { generateNarrativeDemo } from "@/services/narrative.service";
+import type { NarrativeTone, Narrative } from "@/types/api";
 
 const DemoFeature = () => {
   const [inputText, setInputText] = useState("");
-  const [toneSelected, setToneSelected] = useState("activist");
+  const [toneSelected, setToneSelected] = useState<NarrativeTone>("activist");
   const [isGenerating, setIsGenerating] = useState(false);
   const [outputText, setOutputText] = useState("");
   const [generationProgress, setGenerationProgress] = useState(0);
   const [copied, setCopied] = useState(false);
   const [validationError, setValidationError] = useState("");
+  const [generatedNarrative, setGeneratedNarrative] = useState<Narrative | null>(null);
   const { toast } = useToast();
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const tones = [
     { id: "activist", label: "Activist", icon: <Zap className="h-4 w-4" /> },
@@ -26,27 +32,32 @@ const DemoFeature = () => {
     { id: "inspirational", label: "Inspirational", icon: <Sparkles className="h-4 w-4" /> }
   ];
 
+  // Progress animation effect
   useEffect(() => {
     if (isGenerating) {
-      const interval = setInterval(() => {
+      progressIntervalRef.current = setInterval(() => {
         setGenerationProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          return prev + 10;
+          // Slow down as we approach 90% (waiting for actual response)
+          if (prev >= 90) return prev;
+          if (prev >= 70) return prev + 2;
+          return prev + 5;
         });
-      }, 150);
+      }, 200);
 
-      return () => clearInterval(interval);
+      return () => {
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+        }
+      };
     } else {
       setGenerationProgress(0);
     }
   }, [isGenerating]);
 
-  const handleGenerate = () => {
-    // Clear previous errors
+  const handleGenerate = async () => {
+    // Clear previous state
     setValidationError("");
+    setGeneratedNarrative(null);
 
     // Validate input
     const validation = validateNarrativeInput(inputText, toneSelected);
@@ -64,19 +75,45 @@ const DemoFeature = () => {
     setIsGenerating(true);
     setOutputText("");
 
-    // TODO: Replace with actual API call
-    // Simulate AI processing (mock implementation)
-    setTimeout(() => {
-      const outputs = {
-        activist: "The unprecedented loss of biodiversity in our region isn't just a statistic—it's a call to action. Every day we wait, more species face extinction and more ecosystems collapse. Join our movement to demand immediate policy changes that protect our natural heritage before it's too late.",
-        scientific: "Analysis of biodiversity metrics across the region reveals a significant decline of 37% in native species abundance over the past decade. This data correlates strongly with increased industrial activity (p<0.001), suggesting urgent conservation interventions are required to maintain ecosystem stability.",
-        political: "Our administration recognizes that environmental protection and economic growth can coexist. The proposed Biodiversity Protection Act balances the needs of industry stakeholders while ensuring sustainable management of our natural resources for future generations.",
-        inspirational: "Imagine a world where our children can experience the same natural wonders we cherished growing up. Together, we can create this reality. Every conservation action, no matter how small, contributes to a magnificent tapestry of renewal and hope for our planet."
-      };
+    try {
+      // Call the real API
+      const result = await generateNarrativeDemo({
+        input: inputText,
+        tone: toneSelected,
+      });
 
-      setOutputText(outputs[toneSelected as keyof typeof outputs]);
+      // Complete progress
+      setGenerationProgress(100);
+
+      if ('error' in result) {
+        toast({
+          title: "Generation Failed",
+          description: result.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Set the generated narrative
+      setGeneratedNarrative(result.narrative);
+      setOutputText(result.narrative.outputText);
+
+      toast({
+        title: "Narrative Generated",
+        description: `Generated in ${result.narrative.generationTime}ms using ${result.narrative.modelUsed}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
       setIsGenerating(false);
-    }, 1500);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    }
   };
 
   const copyToClipboard = () => {
@@ -196,9 +233,9 @@ const DemoFeature = () => {
                     <Sparkles className="h-4 w-4 text-secondary" />
                     Generated {tones.find(t => t.id === toneSelected)?.label} Narrative:
                   </label>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={copyToClipboard}
                     className="text-xs gap-1 transition-all duration-200"
                   >
@@ -213,8 +250,59 @@ const DemoFeature = () => {
                       <span>{tones.find(t => t.id === toneSelected)?.label} Tone</span>
                     </div>
                   </div>
-                  <p className="text-foreground leading-relaxed pt-2">{outputText}</p>
+                  <p className="text-foreground leading-relaxed pt-2 pr-24">{outputText}</p>
                 </div>
+
+                {/* Authenticity & Provenance Badge */}
+                {generatedNarrative && (
+                  <div className="mt-3 flex items-center justify-between">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="gap-1.5 text-xs">
+                              <Shield className="h-3 w-3" />
+                              AI-Assisted Content
+                            </Badge>
+                            <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="max-w-xs">
+                          <div className="space-y-1.5 text-xs">
+                            <p className="font-medium">Provenance Information</p>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                              <span className="text-muted-foreground">Model:</span>
+                              <span>{generatedNarrative.modelUsed}</span>
+                              <span className="text-muted-foreground">Generated:</span>
+                              <span>{new Date(generatedNarrative.createdAt).toLocaleString()}</span>
+                              <span className="text-muted-foreground">Time:</span>
+                              <span>{generatedNarrative.generationTime}ms</span>
+                              {generatedNarrative.tokenCount && (
+                                <>
+                                  <span className="text-muted-foreground">Tokens:</span>
+                                  <span>{generatedNarrative.tokenCount}</span>
+                                </>
+                              )}
+                              <span className="text-muted-foreground">Source Hash:</span>
+                              <span className="font-mono text-[10px]">
+                                {generatedNarrative.sourceDataHash?.slice(0, 12)}...
+                              </span>
+                            </div>
+                            <p className="text-muted-foreground pt-1 border-t">
+                              This content was generated by AI. Human review recommended before publication.
+                            </p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    {generatedNarrative.isDemo && (
+                      <Badge variant="secondary" className="text-xs">
+                        Demo Mode
+                      </Badge>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

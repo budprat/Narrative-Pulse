@@ -1,0 +1,234 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  avatar        String?
+  role          UserRole  @default(USER)
+
+  // Organization (for team features)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+
+  // Relations
+  narratives    Narrative[]
+  brandVoices   BrandVoice[]
+  refreshTokens RefreshToken[]
+
+  @@index([email])
+  @@index([organizationId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  website     String?
+  logo        String?
+
+  // Organization type for tailored features
+  type        OrganizationType @default(OTHER)
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users       User[]
+  brandVoices BrandVoice[]
+  narratives  Narrative[]
+
+  @@index([slug])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum OrganizationType {
+  NGO
+  POLITICAL_CAMPAIGN
+  ADVOCACY_GROUP
+  GOVERNMENT
+  RESEARCH_INSTITUTION
+  MEDIA
+  ENTERPRISE
+  OTHER
+}
+
+// ============================================
+// BRAND VOICE SYSTEM
+// ============================================
+
+model BrandVoice {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  isDefault      Boolean  @default(false)
+
+  // Owner (user or organization)
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // Voice characteristics (JSON for flexibility)
+  personality    Json     // { formal: 1-10, passionate: 1-10, technical: 1-10, empathetic: 1-10 }
+  terminology    Json     // { preferred: [], avoided: [], replacements: {} }
+
+  // Audience-specific tone profiles
+  audienceProfiles Json?  // { donors: {...}, activists: {...}, policymakers: {...} }
+
+  // Training examples
+  goodExamples   String[] // Array of good content examples
+  poorExamples   String[] // Array of what to avoid
+
+  // Timestamps
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  narratives     Narrative[]
+
+  @@index([userId])
+  @@index([organizationId])
+}
+
+// ============================================
+// NARRATIVE GENERATION
+// ============================================
+
+model Narrative {
+  id              String   @id @default(cuid())
+
+  // Content
+  inputText       String   @db.Text
+  outputText      String   @db.Text
+  tone            NarrativeTone
+
+  // Metadata
+  title           String?
+  description     String?
+  tags            String[]
+
+  // AI Generation Details (for authenticity/provenance)
+  modelUsed       String   // e.g., "claude-3-5-sonnet-20241022"
+  promptVersion   String?  // Track prompt versions
+  generationTime  Int?     // milliseconds
+  tokenCount      Int?
+
+  // Authenticity & Review
+  humanReviewed   Boolean  @default(false)
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  editHistory     Json?    // Array of edit records
+  sourceDataHash  String?  // Hash of input for verification
+
+  // Visual Generation (Nano Banana Pro)
+  hasVisual       Boolean  @default(false)
+  visualUrl       String?
+  visualPrompt    String?  @db.Text
+  visualModel     String?  // e.g., "gemini-3-pro-image-preview"
+
+  // Owner
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  brandVoiceId    String?
+  brandVoice      BrandVoice? @relation(fields: [brandVoiceId], references: [id])
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Analytics (for impact tracking)
+  analytics       NarrativeAnalytics?
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([tone])
+  @@index([createdAt])
+}
+
+model NarrativeAnalytics {
+  id            String    @id @default(cuid())
+  narrativeId   String    @unique
+  narrative     Narrative @relation(fields: [narrativeId], references: [id], onDelete: Cascade)
+
+  // Engagement metrics
+  views         Int       @default(0)
+  shares        Int       @default(0)
+  copies        Int       @default(0)
+  exports       Int       @default(0)
+
+  // Feedback
+  rating        Float?    // 1-5 scale
+  feedbackCount Int       @default(0)
+
+  // Timestamps
+  updatedAt     DateTime  @updatedAt
+}
+
+enum NarrativeTone {
+  activist
+  scientific
+  political
+  inspirational
+}
+
+// ============================================
+// API USAGE TRACKING
+// ============================================
+
+model ApiUsage {
+  id          String   @id @default(cuid())
+  userId      String
+  endpoint    String
+  method      String
+  statusCode  Int
+  responseTime Int     // milliseconds
+  tokensUsed  Int?
+  cost        Float?   // USD
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
